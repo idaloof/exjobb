@@ -1,5 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import MariaDbHandler from "./MariaDbHandler";
+
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -34,8 +39,6 @@ const typeDefs = `#graphql
     type Query {
         persons: [Person]
         person(id: ID!): Person
-        manuscripts: [Manus]
-        manuscript(id: ID!): Manus
         movies: [Movie]
         movie (id: ID!): Movie
         moviesByCategory(category: String!): [Movie]
@@ -48,7 +51,10 @@ const typeDefs = `#graphql
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
     Query: {
-
+        async persons() {
+            const handler = MariaDbHandler.getInstance();
+            return await handler.findAll('persons');
+        }
     },
 };
 
