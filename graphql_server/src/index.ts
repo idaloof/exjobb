@@ -6,6 +6,8 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import MariaDbHandler from "./MariaDbHandler";
 
+import { PersonType } from "./types";
+
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
@@ -55,8 +57,25 @@ const resolvers = {
             const handler = MariaDbHandler.getInstance();
 
             return await handler.findAll('persons');
+        },
+        async person(_: undefined, args: {id: number}) {
+            const handler = MariaDbHandler.getInstance();
+            const res = await handler.findBy('persons', [args.id], 'id');
+
+            return res[0];
         }
     },
+    Person: {
+        async movies(parent: PersonType) {
+            const handler = MariaDbHandler.getInstance();
+            const movies = await handler.findBy('movie2person', [parent.id], 'person_id');
+            const movieIds = movies.map((movie) => {
+                return movie.movie_id
+            })
+
+            return await handler.findBy('movies', movieIds, 'id');
+        }
+    }
 };
 
 // The ApolloServer constructor requires two parameters: your schema
