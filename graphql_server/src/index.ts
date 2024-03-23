@@ -6,7 +6,7 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import MariaDbHandler from "./MariaDbHandler";
 
-import { PersonType } from "./types";
+import { PersonType, MovieType } from "./types";
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -25,6 +25,8 @@ const typeDefs = `#graphql
         year: Int
     }
 
+    # TODO should actors be a person or actor? Where to get the role?
+    # TODO should we have category as an attribute in a movie?
     type Movie {
         id: ID
         title: String
@@ -63,7 +65,35 @@ const resolvers = {
             const res = await handler.findBy('persons', [args.id], 'id');
 
             return res[0];
-        }
+        },
+        async movies() {
+            const handler = MariaDbHandler.getInstance();
+
+            return await handler.findAll('movies');
+        },
+        async movie(_: undefined, args: {id: number}) {
+            const handler = MariaDbHandler.getInstance();
+            const res = await handler.findBy('movies', [args.id], 'id');
+
+            return res[0];
+        },
+        async moviesByCategory(_: undefined, args: {category: string}) {
+            // TODO, use try/catch for when no category found?
+            // TODO Should we write more specific code?
+            try {
+                const handler = MariaDbHandler.getInstance();
+                const category = await handler.findBy('categories', [args.category], 'type');
+                const movies = await handler.findBy('category2movie', [category[0].id], 'category_id');
+                const movieIds = movies.map((movie) => {
+                    return movie.movie_id
+                });
+
+                return await handler.findBy('movies', movieIds, 'id');
+            } catch (err) {
+                // console.log(err);
+                return [];
+            }
+        },
     },
     Person: {
         async movies(parent: PersonType) {
@@ -75,6 +105,17 @@ const resolvers = {
 
             return await handler.findBy('movies', movieIds, 'id');
         }
+    },
+    Movie: {
+        async actors(parent: MovieType) {
+            const handler = MariaDbHandler.getInstance();
+            const movies = await handler.findBy('movie2person', [parent.id], 'movie_id');
+            const personIds = movies.map((movie) => {
+                return movie.person_id
+            })
+
+            return await handler.findBy('persons', personIds, 'id');
+        } 
     }
 };
 
