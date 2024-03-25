@@ -9,4 +9,5 @@ export type MovieType = {
     title: string
     rating: number
     actors: [PersonType]
+    categories: [string]
 }
