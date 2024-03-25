@@ -99,7 +99,7 @@ const resolvers = {
     Person: {
         async movies(parent: PersonType) {
             const handler = MariaDbHandler.getInstance();
-            const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2person WHERE movie_id = ?)`;
+            const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2person WHERE person_id = ?)`;
 
             return await handler.queryWithArgs(query, [parent.id]);
         }
