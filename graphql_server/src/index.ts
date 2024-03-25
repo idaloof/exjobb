@@ -32,6 +32,7 @@ const typeDefs = `#graphql
         title: String
         rating: Float
         actors: [Person]
+        categories: [String]
     }
 
     type Category {
@@ -82,13 +83,13 @@ const resolvers = {
             // TODO Should we write more specific code?
             try {
                 const handler = MariaDbHandler.getInstance();
-                const category = await handler.findBy('categories', [args.category], 'type');
-                const movies = await handler.findBy('category2movie', [category[0].id], 'category_id');
-                const movieIds = movies.map((movie) => {
-                    return movie.movie_id
-                });
+                const query = `
+                    SELECT * FROM movies WHERE id IN
+                        (SELECT movie_id FROM category2movie WHERE category_id IN
+                            (SELECT id FROM categories WHERE type = ?))
+                `;
 
-                return await handler.findBy('movies', movieIds, 'id');
+                return await handler.queryWithArgs(query, [args.category])
             } catch (err) {
                 // console.log(err);
                 return [];
@@ -98,25 +99,31 @@ const resolvers = {
     Person: {
         async movies(parent: PersonType) {
             const handler = MariaDbHandler.getInstance();
-            const movies = await handler.findBy('movie2person', [parent.id], 'person_id');
-            const movieIds = movies.map((movie) => {
-                return movie.movie_id
-            })
+            const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2person WHERE movie_id = ?)`;
 
-            return await handler.findBy('movies', movieIds, 'id');
+            return await handler.queryWithArgs(query, [parent.id]);
         }
     },
     Movie: {
         async actors(parent: MovieType) {
             const handler = MariaDbHandler.getInstance();
-            const movies = await handler.findBy('movie2person', [parent.id], 'movie_id');
-            const personIds = movies.map((movie) => {
-                return movie.person_id
-            })
+            const query = `SELECT * FROM persons WHERE id IN (SELECT person_id FROM movie2person WHERE movie_id = ?)`;
 
-            return await handler.findBy('persons', personIds, 'id');
-        } 
-    }
+            return await handler.queryWithArgs(query, [parent.id]);
+        },
+        async categories(parent: MovieType) {
+            const handler = MariaDbHandler.getInstance();
+            const query = `SELECT type FROM categories WHERE id IN (SELECT category_id FROM category2movie WHERE movie_id = ?);`;
+
+            const categoryObjects = await handler.queryWithArgs(query, [parent.id]);
+
+            const categories = categoryObjects.map((category) => {
+                return category.type;
+            });
+
+            return categories;
+        }
+    },
 };
 
 // The ApolloServer constructor requires two parameters: your schema
