@@ -6,7 +6,7 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import MariaDbHandler from "./MariaDbHandler";
 
-import { ActorType, MovieType } from "./types";
+import { ActorType, MovieType, CharacterType } from "./types";
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -27,7 +27,7 @@ const typeDefs = `#graphql
     }
 
     type Character {
-        name: String
+        character: String
         played_by: Actor
     }
 
@@ -113,10 +113,8 @@ const resolvers = {
     Movie: {
         async characters(parent: MovieType) {
             const handler = MariaDbHandler.getInstance();
+            const result = await handler.findBy('movie2actor', [parent.id], 'movie_id');
 
-            const query = `SELECT character FROM movie2actor WHERE movie_id IN (?)`;
-            const result = await handler.queryWithArgs(query, [parent.id]);
-            console.log(result);
             return result;
         },
         async categories(parent: MovieType) {
@@ -132,6 +130,15 @@ const resolvers = {
             return categories;
         }
     },
+    Character: {
+        async played_by(parent: CharacterType) {
+            console.log("parent", parent);
+            const handler = MariaDbHandler.getInstance();
+            const result = await handler.findBy('actors', [parent.actor_id], 'id');
+
+            return result[0];
+        }
+    }
 };
 
 // The ApolloServer constructor requires two parameters: your schema
