@@ -11,3 +11,9 @@ export type MovieType = {
     actors: [ActorType]
     categories: [string]
 }
+
+export type CharacterType = {
+    actor_id: number,
+    movie_id: number,
+    character: string
+}
