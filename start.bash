@@ -84,7 +84,7 @@ function app-up
 function app-down
 {
     # Container will be closed when exiting, but this will remove all imagess
-    docker-compose down -v --rmi all
+    docker-compose down -v --rmi local
 }
 
 #

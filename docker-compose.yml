@@ -1,20 +1,45 @@
-version: "3"
+version: "3.8"
+
+volumes:
+  graphql_server_node_modules:
+
 services:
   mariadb:
     image: "mariadb:10.11.6"
     container_name: "mariadb"
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: bikes
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     volumes:
       - "./mariadb/csv/:/csv/"
       - "./mariadb/sql/:/sql/"
       - "./mariadb/setup.sql:/docker-entrypoint-initdb.d/setup.sql"
     ports:
-      - "3307:3307"
+      - "3306:3306"
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER}", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER}", "-p${DB_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: "always"
+
+  graphql_server:
+    container_name: graphql_server
+    build:
+      context: "./graphql_server/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_server/:/server"
+      - "graphql_server_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    restart: always
