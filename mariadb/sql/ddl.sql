@@ -1,12 +1,12 @@
-DROP TABLE IF EXISTS `movie2person`;
+DROP TABLE IF EXISTS `movie2actor`;
 DROP TABLE IF EXISTS `category2movie`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `movies`;
 DROP TABLE IF EXISTS `manus`;
-DROP TABLE IF EXISTS `persons`;
+DROP TABLE IF EXISTS `actors`;
 
--- Create table for persons
-CREATE TABLE `persons` (
+-- Create table for actors
+CREATE TABLE `actors` (
     `id` INT NOT NULL,
     `first_name` VARCHAR(255) NOT NULL,
     `last_name` VARCHAR(255) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `manus` (
     `year` INT NOT NULL,
 
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`author_id`) REFERENCES `persons` (`id`)
+    FOREIGN KEY (`author_id`) REFERENCES `actors` (`id`)
 );
 
 -- Create table for movies
@@ -51,13 +51,13 @@ CREATE TABLE `category2movie` (
     FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`)
 );
 
--- Create table for movie2person
-CREATE TABLE `movie2person` (
+-- Create table for movie2actor
+CREATE TABLE `movie2actor` (
     `movie_id` INT NOT NULL,
-    `person_id` INT NOT NULL,
-    `role` VARCHAR(255) NOT NULL,
+    `actor_id` INT NOT NULL,
+    `character` VARCHAR(255) NOT NULL,
 
-    PRIMARY KEY (`movie_id`, `person_id`),
+    PRIMARY KEY (`movie_id`, `actor_id`),
     FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`),
-    FOREIGN KEY (`person_id`) REFERENCES `persons` (`id`)
+    FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`)
 );

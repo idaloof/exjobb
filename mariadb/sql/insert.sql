@@ -1,5 +1,5 @@
-LOAD DATA LOCAL INFILE './csv/persons.csv'
-INTO TABLE `persons`
+LOAD DATA LOCAL INFILE './csv/actors.csv'
+INTO TABLE `actors`
 CHARSET utf8
 FIELDS
     TERMINATED BY ','
@@ -53,8 +53,8 @@ LINES
 IGNORE 1 LINES
 ;
 
-LOAD DATA LOCAL INFILE './csv/movie2person.csv'
-INTO TABLE `movie2person`
+LOAD DATA LOCAL INFILE './csv/movie2actor.csv'
+INTO TABLE `movie2actor`
 CHARSET utf8
 FIELDS
     TERMINATED BY ','

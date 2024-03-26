@@ -6,23 +6,29 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import MariaDbHandler from "./MariaDbHandler";
 
-import { PersonType, MovieType } from "./types";
+import { ActorType, MovieType } from "./types";
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
 const typeDefs = `#graphql
-    type Person {
+    type Actor {
         id: ID
         first_name: String
         last_name: String
         movies: [Movie]
+        manuscripts: [Manus]
     }
 
     type Manus {
         id: ID
-        author: Person
+        author: Actor
         year: Int
+    }
+
+    type Character {
+        name: String
+        played_by: Actor
     }
 
     # TODO should actors be a person or actor? Where to get the role?
@@ -31,7 +37,7 @@ const typeDefs = `#graphql
         id: ID
         title: String
         rating: Float
-        actors: [Person]
+        characters: [Character]
         categories: [String]
     }
 
@@ -42,8 +48,8 @@ const typeDefs = `#graphql
     }
 
     type Query {
-        persons: [Person]
-        person(id: ID!): Person
+        actors: [Actor]
+        actor(id: ID!): Actor
         movies: [Movie]
         movie (id: ID!): Movie
         moviesByCategory(category: String!): [Movie]
@@ -56,14 +62,14 @@ const typeDefs = `#graphql
 // This resolver retrieves books from the "books" array above.
 const resolvers = {
     Query: {
-        async persons() {
+        async actors() {
             const handler = MariaDbHandler.getInstance();
 
-            return await handler.findAll('persons');
+            return await handler.findAll('actors');
         },
-        async person(_: undefined, args: {id: number}) {
+        async actor(_: undefined, args: {id: number}) {
             const handler = MariaDbHandler.getInstance();
-            const res = await handler.findBy('persons', [args.id], 'id');
+            const res = await handler.findBy('actors', [args.id], 'id');
 
             return res[0];
         },
@@ -96,20 +102,22 @@ const resolvers = {
             }
         },
     },
-    Person: {
-        async movies(parent: PersonType) {
+    Actor: {
+        async movies(parent: ActorType) {
             const handler = MariaDbHandler.getInstance();
-            const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2person WHERE person_id = ?)`;
+            const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2actor WHERE actor_id = ?)`;
 
             return await handler.queryWithArgs(query, [parent.id]);
         }
     },
     Movie: {
-        async actors(parent: MovieType) {
+        async characters(parent: MovieType) {
             const handler = MariaDbHandler.getInstance();
-            const query = `SELECT * FROM persons WHERE id IN (SELECT person_id FROM movie2person WHERE movie_id = ?)`;
 
-            return await handler.queryWithArgs(query, [parent.id]);
+            const query = `SELECT character FROM movie2actor WHERE movie_id IN (?)`;
+            const result = await handler.queryWithArgs(query, [parent.id]);
+            console.log(result);
+            return result;
         },
         async categories(parent: MovieType) {
             const handler = MariaDbHandler.getInstance();
