@@ -1,0 +1,60 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model actors {
+    id          Int           @id
+    first_name  String        @db.VarChar(255)
+    last_name   String        @db.VarChar(255)
+    manuses     manus[]
+    movie2actor movie2actor[]
+}
+
+model categories {
+    id             Int              @id
+    type           String           @db.VarChar(15)
+    category2movie category2movie[]
+}
+
+model category2movie {
+    category_id Int
+    movie_id    Int
+    categories  categories @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "category2movie_ibfk_1")
+    movies      movies     @relation(fields: [movie_id], references: [id], onUpdate: Restrict, map: "category2movie_ibfk_2")
+
+    @@id([category_id, movie_id])
+    @@index([movie_id], map: "movie_id")
+}
+
+model manus {
+    id        Int    @id
+    author_id Int
+    year      Int
+    actors    actors @relation(fields: [author_id], references: [id], onUpdate: Restrict, map: "manus_ibfk_1")
+
+    @@index([author_id], map: "author_id")
+}
+
+model movie2actor {
+    movie_id  Int
+    actor_id  Int
+    character String @db.VarChar(255)
+    movies    movies @relation(fields: [movie_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_1")
+    actors    actors @relation(fields: [actor_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_2")
+
+    @@id([movie_id, actor_id])
+    @@index([actor_id], map: "actor_id")
+}
+
+model movies {
+    id             Int              @id
+    title          String           @db.VarChar(255)
+    rating         Float            @db.Float
+    category2movie category2movie[]
+    movie2actor    movie2actor[]
+}
