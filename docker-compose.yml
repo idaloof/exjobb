@@ -3,6 +3,7 @@ version: "3.8"
 volumes:
   graphql_server_node_modules:
   graphql_joinmonster_node_modules:
+  graphql_neo4j_node_modules:
 
 services:
   mariadb:
@@ -23,6 +24,46 @@ services:
       timeout: 5s
       retries: 5
     restart: "always"
+  
+  neo4j:
+    image: "neo4j:5.18.0" # What version to use? Bookworm for PI?
+    container_name: "neo4j"
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASS}
+    volumes:
+      - "./neo4j/data/:/data"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    restart: "always"
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
+
+  graphql_neo4j:
+    container_name: graphql_neo4j
+    build:
+      context: "./graphql_neo4j/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - NEO4J_HOST=${NEO4J_HOST}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASS=${NEO4J_PASS}
+    volumes:
+      - "./graphql_neo4j:/server"
+      - "graphql_neo4j_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    links:
+      - "neo4j:neo4j"
+    ports:
+      - "5500:4000"
+    restart: always
 
   graphql_server:
     container_name: graphql_server
