@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import MariaDbHandler from "./MariaDbHandler";
 
 import { ActorType, MovieType, CharacterType } from "./types";
 
@@ -47,12 +46,10 @@ const typeDefs = `#graphql
 
     type Query {
         actors: [Actor]
-        actor(id: ID!): Actor
+        actor(id: Int!): Actor
         movies: [Movie]
-        movie (id: ID!): Movie
+        movie (id: Int!): Movie
         moviesByCategory(category: String!): [Movie]
-        categories: [Category]
-        category(id: ID!): Category
     }
 `;
 
@@ -63,20 +60,20 @@ const resolvers = {
         async actors() {
             return await prisma.actors.findMany();
         },
-        async actor(_: undefined, args: {id: string}) {
+        async actor(_: undefined, args: {id: number}) {
             return await prisma.actors.findUnique({
                 where: {
-                    id: parseInt(args.id),
+                    id: args.id,
                 }
             })
         },
         async movies() {
             return await prisma.movies.findMany();
         },
-        async movie(_: undefined, args: {id: string}) {
+        async movie(_: undefined, args: {id: number}) {
             return await prisma.movies.findUnique({
                 where: {
-                    id: parseInt(args.id),
+                    id: args.id,
                 }
             })
         },
