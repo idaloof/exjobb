@@ -1,4 +1,4 @@
-id:ID(Actor),author_id,year
+id:ID(Manus),author_id:IGNORE,year
 "1","678","1975"
 "2","938","1994"
 "3","417","2012"
