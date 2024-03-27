@@ -2,6 +2,7 @@ version: "3.8"
 
 volumes:
   graphql_server_node_modules:
+  graphql_prisma_basic_node_modules:
 
 services:
   mariadb:
@@ -42,4 +43,22 @@ services:
         condition: service_healthy
     ports:
       - "4000:4000"
+    restart: always
+
+  graphql_prisma_basic:
+    container_name: graphql_prisma_basic
+    build:
+      context: "./graphql_prisma_basic/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DATABASE_URL=${DB_URL}
+    volumes:
+      - "./graphql_prisma_basic/:/server"
+      - "graphql_prisma_basic_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "5001:4000"
     restart: always
