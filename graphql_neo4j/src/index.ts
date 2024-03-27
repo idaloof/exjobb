@@ -7,60 +7,40 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { Neo4jGraphQL } from "@neo4j/graphql";
 import neo4j from "neo4j-driver";
 
-// const typeDefs = `#graphql
-//     type Actor {
-//         id: ID
-//         first_name: String
-//         last_name: String
-//         movies: [Movie] @relationship(type: "ACTED_IN", direction: IN)
-//         manuscripts: [Manus]
-//     }
-
-//     type Manus {
-//         id: ID
-//         author: Actor
-//         year: Int
-//     }
-
-//     type Character {
-//         character: String
-//         played_by: Actor
-//     }
-
-//     type Movie {
-//         id: ID
-//         title: String
-//         rating: Float
-//         characters: [Character]
-//         categories: [String]
-//     }
-
-//     type Category {
-//         type: String
-//     }
-
-//     type Query {
-//         actors: [Actor]
-//         actor(id: ID!): Actor
-//         movies: [Movie]
-//         movie (id: ID!): Movie
-//         moviesByCategory(category: String!): [Movie]
-//     }
-// `;
-
+// The '@mutation(operations: [])' removes all the automated mutations from the neo4j diver
+// The '@filterable' is to limit what can be used when filtering with a 'where' clause
 const typeDefs = `#graphql
-    type Actor {
+    type Actor @mutation(operations: []) {
         id: ID
         first_name: String
         last_name: String
-        movies: [Movie!]! @relationship(type: "ACTED_IN", direction: OUT)
+        movies: [Movie!]! @relationship(type: "ACTED_IN", properties: "Character", direction: OUT, aggregate: false)
+        manuscripts: [Manus!]! @relationship(type: "HAS_WRITTEN", direction: OUT, aggregate: false)
     }
 
-    type Movie {
-        id: Int
-        title: String
-        rating: Float
+    type Manus @mutation(operations: []) {
+        id: ID
+        author: Actor! @relationship(type: "HAS_WRITTEN", direction: IN, aggregate: false)
+        year: Int
     }
+
+    type Character @relationshipProperties {
+        character: String!
+    }
+
+    type Movie @mutation(operations: []) {
+        id: Int
+        title: String @filterable(byValue: false, byAggregate: false)
+        rating: Float @filterable(byValue: true, byAggregate: true)
+        categories: [Category!]! @relationship(type: "LISTED_IN", direction: OUT, aggregate: false) @filterable(byValue: true, byAggregate: false)
+        characters: [Actor!]! @relationship(type: "ACTED_IN", properties: "Character", direction: IN, aggregate: false) @filterable(byValue: false, byAggregate: false)
+    }
+
+    type Category @mutation(operations: []) {
+        type: String
+    }
+
+    extend schema @query(read: true, aggregate: false)
 `;
 
 const driver = neo4j.driver(
