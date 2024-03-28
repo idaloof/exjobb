@@ -139,7 +139,7 @@ const server = new ApolloServer<BaseContext>({
 
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
 const { url } = await startStandaloneServer(server, {
-    listen: { port: 5500 },
+    listen: { port: 4000 },
 });
 
 console.log(`🚀  Server ready at: ${url}`);
