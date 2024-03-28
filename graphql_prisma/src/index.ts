@@ -7,20 +7,20 @@ const prisma = new PrismaClient({
 import { ApolloServer, BaseContext } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-import { ActorType, MovieType, CharacterType } from "./types";
+import { ActorType, MovieType } from "./types";
 
 import { PrismaSelect } from "@paljs/plugins";
 import { GraphQLResolveInfo } from "graphql";
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
+// A schema is a collection of type definitions.
+// To work with Prisma types Movies and Categories represent the junctiontables
+// to be able to resolve the many-to-many connections with PrismaSelect
 const typeDefs = `#graphql
     type Actor {
         id: ID
         first_name: String
         last_name: String
-        movies: [Movie]
+        movies: [Movies]
         manuscripts: [Manus]
     }
 
@@ -35,18 +35,24 @@ const typeDefs = `#graphql
         played_by: Actor
     }
 
+    type Movies {
+        movie: Movie
+    }
+
     type Movie {
         id: ID
         title: String
         rating: Float
         characters: [Character]
-        categories: [String]
+        categories: [Categories]
+    }
+
+    type Categories {
+        category: Category
     }
 
     type Category {
-        id: ID
         type: String
-        movies(lt_rating: Float, gt_rating: Float): [Movie]
     }
 
     type Query {
@@ -61,110 +67,77 @@ const typeDefs = `#graphql
 // Resolvers define how to fetch the types defined in your schema.
 const resolvers = {
     Query: {
-        async actors(_: undefined, { take = 10 }, __, info: GraphQLResolveInfo ) {
-            const select = new PrismaSelect(info);
-            console.dir(select.value, {depth: null});
-            return await prisma.actors.findMany({
-                take,
-                include: { manuscripts: true }
+        async actors(_: undefined, { take = 10 }, __, info: GraphQLResolveInfo): Promise<ActorType[]> {
+            const select = new PrismaSelect(info).value;
+            const res = await prisma.actors.findMany({
+                take, 
+                ...select
             });
+
+            return res;
         },
-        async actor(_: undefined, args: {id: number}) {
-            return await prisma.actors.findUnique({
+        async actor(_: undefined, args: { id: number }, __, info: GraphQLResolveInfo): Promise<ActorType | null> {
+            const select = new PrismaSelect(info).value;
+            const res = await prisma.actors.findUnique({
                 where: {
-                    id: args.id,
-                }
+                    id: args.id
+                },
+                ...select
             });
+
+            return res
         },
-        async movies() {
-            return await prisma.movies.findMany();
+        async movies(_: undefined, { take = 10 }, __, info: GraphQLResolveInfo): Promise<MovieType[]> {
+            const select = new PrismaSelect(info).value;
+            const res = await prisma.movies.findMany({
+                take, 
+                ...select
+            });
+
+            return res
         },
-        async movie(_: undefined, args: {id: number}) {
-            return await prisma.movies.findUnique({
+        async movie(_: undefined, args: { id: number }, __, info: GraphQLResolveInfo): Promise<MovieType | null> {
+            const select = new PrismaSelect(info).value;
+            const res = await prisma.movies.findUnique({
                 where: {
-                    id: args.id,
-                }
+                    id: args.id
+                },
+                ...select
             });
+
+            return res
         },
-        async moviesByCategory(_: undefined, args: { category: string }) {
+        async moviesByCategory(_: undefined, args: { category: string }, __, info: GraphQLResolveInfo): Promise<MovieType[] | undefined> {
             try {
-                return await prisma.movies.findMany({
+                const select = new PrismaSelect(info).value;
+                const res = await prisma.movies.findMany({
                     where: {
-                        category2movie: {
+                        categories: {
                             some: {
-                                categories: {
+                                category: {
                                     type: args.category
                                 }
                             }
                         }
-                    }
+                    },
+                    ...select
                 });
+
+                return res;
             } catch (e) {
                 console.error(e);
             }
         },
-    },
-    Actor: {
-        async movies(parent: ActorType) {
-            return await prisma.movies.findMany({
-                where: {
-                    movie2actor: {
-                        some: {
-                            actor_id: parent.id
-                        }
-                    }
-                }
-            })
-        }
-    },
-    Movie: {
-        async characters(parent: MovieType) {
-            return await prisma.movie2actor.findMany({
-                where: {
-                    movie_id: parent.id
-                }
-            })
-        },
-        async categories(parent: MovieType) {
-            // console.log(parent.id)
-            const result = await prisma.categories.findMany({
-                where: {
-                    category2movie: {
-                        some: {
-                            movie_id: parent.id
-                        }
-                    }
-                }
-            });
-            const newResult = result.map(category => {return category.type});
-
-            return newResult;
-        }
-    },
-    Character: {
-        async played_by(parent: CharacterType) {
-            const result = await prisma.actors.findUnique({
-                where: {
-                    id: parent.actor_id
-                }
-            });
-
-            return result;
-        }
     }
 };
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
+// The ApolloServer constructor requires two parameters, schema and resolvers
 const server = new ApolloServer<BaseContext>({
     typeDefs,
     resolvers,
 });
 
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
     listen: { port: 5500 },
 });
