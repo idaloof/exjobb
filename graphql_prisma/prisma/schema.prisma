@@ -12,7 +12,7 @@ model actors {
   first_name  String        @db.VarChar(255)
   last_name   String        @db.VarChar(255)
   manuscripts manus[]
-  movies movie2actor[]
+  movies      movie2actor[]
 }
 
 model categories {
@@ -24,7 +24,7 @@ model categories {
 model category2movie {
   category_id Int
   movie_id    Int
-  categories  categories @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "category2movie_ibfk_1")
+  category    categories @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "category2movie_ibfk_1")
   movies      movies     @relation(fields: [movie_id], references: [id], onUpdate: Restrict, map: "category2movie_ibfk_2")
 
   @@id([category_id, movie_id])
@@ -35,7 +35,7 @@ model manus {
   id        Int    @id
   author_id Int
   year      Int
-  actors    actors @relation(fields: [author_id], references: [id], onUpdate: Restrict, map: "manus_ibfk_1")
+  author    actors @relation(fields: [author_id], references: [id], onUpdate: Restrict, map: "manus_ibfk_1")
 
   @@index([author_id], map: "author_id")
 }
@@ -44,8 +44,8 @@ model movie2actor {
   movie_id  Int
   actor_id  Int
   character String @db.VarChar(255)
-  movies    movies @relation(fields: [movie_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_1")
-  actors    actors @relation(fields: [actor_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_2")
+  movie     movies @relation(fields: [movie_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_1")
+  played_by actors @relation(fields: [actor_id], references: [id], onUpdate: Restrict, map: "movie2actor_ibfk_2")
 
   @@id([movie_id, actor_id])
   @@index([actor_id], map: "actor_id")
@@ -54,7 +54,7 @@ model movie2actor {
 model movies {
   id             Int              @id
   title          String           @db.VarChar(255)
-  rating         Float            @db.Float
-  category2movie category2movie[]
-  movie2actor    movie2actor[]
+  rating         Float            @db.Float 
+  categories     category2movie[]
+  characters     movie2actor[]
 }
