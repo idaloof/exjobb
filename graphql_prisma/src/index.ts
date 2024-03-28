@@ -67,10 +67,9 @@ const typeDefs = `#graphql
 // Resolvers define how to fetch the types defined in your schema.
 const resolvers = {
     Query: {
-        async actors(_: undefined, { take = 10 }, __, info: GraphQLResolveInfo): Promise<ActorType[]> {
+        async actors(_: undefined, {}, {}, info: GraphQLResolveInfo): Promise<ActorType[]> {
             const select = new PrismaSelect(info).value;
             const res = await prisma.actors.findMany({
-                take, 
                 ...select
             });
 
@@ -87,16 +86,15 @@ const resolvers = {
 
             return res
         },
-        async movies(_: undefined, { take = 10 }, __, info: GraphQLResolveInfo): Promise<MovieType[]> {
+        async movies(_: undefined, {}, {}, info: GraphQLResolveInfo): Promise<MovieType[]> {
             const select = new PrismaSelect(info).value;
             const res = await prisma.movies.findMany({
-                take, 
                 ...select
             });
 
             return res
         },
-        async movie(_: undefined, args: { id: number }, __, info: GraphQLResolveInfo): Promise<MovieType | null> {
+        async movie(_: undefined, args: { id: number }, {}, info: GraphQLResolveInfo): Promise<MovieType | null> {
             const select = new PrismaSelect(info).value;
             const res = await prisma.movies.findUnique({
                 where: {
@@ -107,7 +105,7 @@ const resolvers = {
 
             return res
         },
-        async moviesByCategory(_: undefined, args: { category: string }, __, info: GraphQLResolveInfo): Promise<MovieType[] | undefined> {
+        async moviesByCategory(_: undefined, args: { category: string }, {}, info: GraphQLResolveInfo): Promise<MovieType[] | undefined> {
             try {
                 const select = new PrismaSelect(info).value;
                 const res = await prisma.movies.findMany({
