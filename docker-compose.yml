@@ -2,6 +2,7 @@ version: "3.8"
 
 volumes:
   graphql_server_node_modules:
+  graphql_joinmonster_node_modules:
 
 services:
   mariadb:
@@ -42,4 +43,25 @@ services:
         condition: service_healthy
     ports:
       - "4000:4000"
+    restart: always
+
+  graphql_joinmonster:
+    container_name: graphql_joinmonster
+    build:
+      context: "./graphql_joinmonster/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_joinmonster/:/server"
+      - "graphql_joinmonster_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "5000:4000"
     restart: always
