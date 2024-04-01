@@ -4,6 +4,7 @@ volumes:
   graphql_server_node_modules:
   graphql_prisma_basic_node_modules:
   graphql_prisma_node_modules:
+  graphql_dataloader_node_modules:
 
 services:
   mariadb:
@@ -91,3 +92,24 @@ services:
       - |
         npx prisma generate
         npm run dev
+
+  graphql_dataloader:
+    container_name: graphql_dataloader
+    build:
+      context: "./graphql_dataloader/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_dataloader/:/server"
+      - "graphql_dataloader_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4001:4000"
+    restart: always
