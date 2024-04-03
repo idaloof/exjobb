@@ -5,6 +5,7 @@ volumes:
   graphql_prisma_basic_node_modules:
   graphql_prisma_node_modules:
   graphql_dataloader_node_modules:
+  graphql_joinmonster_node_modules:
 
 services:
   mariadb:
@@ -44,7 +45,7 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4000:4000"
+      - "4001:4000"
     restart: always
 
   graphql_prisma_basic:
@@ -77,7 +78,7 @@ services:
       dockerfile: "./Dockerfile"
     restart: always
     ports:
-      - "5500:4000"
+      - "4002:4000"
     environment:
       - DATABASE_URL=${PRISMA_DB_URL}
     volumes:
@@ -111,5 +112,27 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4001:4000"
+      - "4003:4000"
     restart: always
+
+  graphql_joinmonster:
+    container_name: graphql_joinmonster
+    build:
+      context: "./graphql_joinmonster/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_joinmonster/:/server"
+      - "graphql_joinmonster_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4004:4000"
+    restart: always
+    
