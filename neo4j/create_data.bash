@@ -1,0 +1,3 @@
+docker run --interactive --tty --publish=7474:7474 --publish=7687:7687 --volume=./data:/data --volume=./import:/import neo4j:5.18.0 neo4j-admin database import full --nodes=Actor=/import/actors.csv --nodes=Movie=/import/movies.csv --nodes=Manus=/import/manus.csv --relationships=HAS_WRITTEN=/import/manus2actor.csv --relationships=ACTED_IN=/import/movie2actor.csv --nodes=Category=/import/categories.csv --relationships=LISTED_IN=/import/category2movie.csv
+
+# docker run --restart always --publish=7474:7474 --publish=7687:7687 --volume=./neo4j/data:/data --env NEO4J_AUTH=neo4j/p@ssW0rdneo4j:5.18.0
