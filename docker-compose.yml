@@ -2,6 +2,9 @@ version: "3.8"
 
 volumes:
   graphql_server_node_modules:
+  graphql_prisma_basic_node_modules:
+  graphql_prisma_node_modules:
+  graphql_dataloader_node_modules:
   graphql_joinmonster_node_modules:
 
 services:
@@ -42,7 +45,74 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4000:4000"
+      - "4001:4000"
+    restart: always
+
+  graphql_prisma_basic:
+    container_name: graphql_prisma_basic
+    build:
+      context: "./graphql_prisma_basic/"
+      dockerfile: "./Dockerfile"
+    restart: always
+    ports:
+      - "5000:4000"
+    environment:
+      - DATABASE_URL=${PRISMA_DB_URL}
+    volumes:
+      - "./graphql_prisma_basic/:/server"
+      - "graphql_prisma_basic_node_modules:/server/node_modules"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npx prisma generate
+        npm run dev
+
+  graphql_prisma:
+    container_name: graphql_prisma
+    build:
+      context: "./graphql_prisma/"
+      dockerfile: "./Dockerfile"
+    restart: always
+    ports:
+      - "4002:4000"
+    environment:
+      - DATABASE_URL=${PRISMA_DB_URL}
+    volumes:
+      - "./graphql_prisma/:/server"
+      - "graphql_prisma_node_modules:/server/node_modules"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npx prisma generate
+        npm run dev
+
+  graphql_dataloader:
+    container_name: graphql_dataloader
+    build:
+      context: "./graphql_dataloader/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_dataloader/:/server"
+      - "graphql_dataloader_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4003:4000"
     restart: always
 
   graphql_joinmonster:
@@ -63,5 +133,6 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "5000:4000"
+      - "4004:4000"
     restart: always
+    

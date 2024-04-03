@@ -79,7 +79,52 @@ function app-up
 }
 
 #
-# Function to shut down the container
+# Function to start the basic graphql server container
+#
+function app-basic
+{
+    # Start the containers and enter the server container in bash
+    docker-compose up -d --build mariadb graphql_server
+}
+
+#
+# Function to start the dataloader container
+#
+function app-dataloader
+{
+    # Start the containers and enter the server container in bash
+    docker-compose up -d --build mariadb graphql_dataloader
+}
+
+#
+# Function to start the dataloader container
+#
+function app-joinmonster
+{
+    # Start the containers and enter the server container in bash
+    docker-compose up -d --build mariadb graphql_joinmonster
+}
+
+#
+# Function to start the prisma_basic container
+#
+function app-prismabasic
+{
+    # Start the containers and enter the server container in bash
+    docker-compose up -d --build mariadb graphql_prisma_basic
+}
+
+#
+# Function to start the prisma container
+#
+function app-prisma
+{
+    # Start the containers and enter the server container in bash
+    docker-compose up -d --build mariadb graphql_prisma
+}
+
+#
+# Function to shut down the network
 #
 function app-down
 {
@@ -106,7 +151,12 @@ function main
                 exit 0
             ;;
 
-            up            \
+            up             \
+            | basic        \
+            | dataloader   \
+            | joinmonster  \
+            | prismabasic  \
+            | prisma       \
             | down)
                 command="$1"
                 shift
