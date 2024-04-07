@@ -29,12 +29,12 @@ services:
     restart: "always"
 
   neo4j:
-    image: "neo4j:5.18.0" # What version to use? Bookworm for PI?
     container_name: "neo4j"
+    build:
+      context: "./neo4j/"
+      dockerfile: "./Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
     environment:
-      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASS}
-    volumes:
-      - "./neo4j/data/:/data"
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASS}
     ports:
       - "7474:7474"
       - "7687:7687"
