@@ -124,6 +124,16 @@ function app-prisma
 }
 
 #
+# Function to start the prisma container
+#
+function app-neo4j
+{
+    # Start the containers
+    docker-compose up -d --build neo4j graphql_neo4j
+}
+
+
+#
 # Function to shut down the network
 #
 function app-down
@@ -157,6 +167,7 @@ function main
             | joinmonster  \
             | prismabasic  \
             | prisma       \
+            | neo4j        \
             | down)
                 command="$1"
                 shift
