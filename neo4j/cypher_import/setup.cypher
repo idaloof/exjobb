@@ -4,6 +4,9 @@ CREATE CONSTRAINT idx_movie IF NOT EXISTS FOR (m:Movie) REQUIRE m.id IS UNIQUE;
 CREATE CONSTRAINT idx_category IF NOT EXISTS FOR (c:Category) REQUIRE c.id IS UNIQUE;
 CREATE CONSTRAINT idx_manus IF NOT EXISTS FOR (m:Manus) REQUIRE m.id IS UNIQUE;
 
+// Delete all relationships
+MATCH ()-[r]-() DELETE r;
+
 // Delete all nodes
 MATCH (all) DELETE all;
 
