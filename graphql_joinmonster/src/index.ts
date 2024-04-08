@@ -163,6 +163,14 @@ joinMonsterAdapt(schema, {
                         }
                     }
                 }
+            },
+            manuscripts: {
+                extensions: {
+                    joinMonster: {
+                        sqlJoin: (actorsTable: string, manusTable: string) =>
+                        `${actorsTable}.id = ${manusTable}.author_id`,
+                    }
+                }
             }
         }
     },
@@ -187,8 +195,16 @@ joinMonsterAdapt(schema, {
                     joinMonster: {
                         sqlJoin: (characterTable: string, actorsTable: string) =>
                         `${characterTable}.actor_id = ${actorsTable}.id`,
-                    }          
+                    }
                 }
+            }
+        }
+    },
+    Manus: {
+        extensions: {
+            joinMonster: {
+                sqlTable: 'manus',
+                uniqueKey: 'id',
             }
         }
     },
