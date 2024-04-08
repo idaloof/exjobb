@@ -1,13 +1,14 @@
 import { faker } from '@faker-js/faker';
 import fs from 'fs';
+import path from 'path';
 
 export default {
-    createManuscript: function (amount = 1000, noOfAuthors = 1000) {
+    createManuscript: function (noOfManuscripts = 1000, noOfAuthors = 1000) {
         const manus = [];
         const max = 2023;
         const min = 1975;
 
-        for (let counter = 1; counter <= amount; counter++) {
+        for (let counter = 1; counter <= noOfManuscripts; counter++) {
             manus.push({
                 id: counter,
                 author_id: Math.floor(Math.random() * noOfAuthors) + 1,
@@ -17,10 +18,10 @@ export default {
 
         return manus;
     },
-    createPerson: function (amount = 1000) {
+    createActor: function (noOfActors = 1000) {
         const persons = []
 
-        for (let counter = 1; counter <= amount; counter++) {
+        for (let counter = 1; counter <= noOfActors; counter++) {
             persons.push({
                 id: counter,
                 first_name: faker.person.firstName(),
@@ -30,10 +31,10 @@ export default {
 
         return persons;
     },
-    createMovie: function (amount = 1000) {
+    createMovie: function (noOfMovies = 1000) {
         const movies = []
 
-        for (let counter = 1; counter <= amount; counter++) {
+        for (let counter = 1; counter <= noOfMovies; counter++) {
             movies.push({
                 id: counter,
                 title: faker.music.songName(),
@@ -57,12 +58,12 @@ export default {
 
         return categories;
     },
-    createMovieCategoryConnection: function (amount = 1000) {
+    createMovieCategoryConnection: function (noOfMovies = 1000) {
         const moviesAndCategories = []
         const max = 13
         const min = 1
 
-        for (let counter = 1; counter <= amount; counter++) {
+        for (let counter = 1; counter <= noOfMovies; counter++) {
             const random_category = Math.floor(Math.random() * (max - min + 1) + min)
             moviesAndCategories.push({
                 category_id: random_category,
@@ -82,15 +83,15 @@ export default {
 
         return moviesAndCategories;
     },
-    createMoviePersonConnection: function () {
+    createMoviePersonConnection: function (noOfMovies = 1000, actorsInMovies = 10) {
         const moviesAndPersons = []
         let alreadyInMovie;
         let person;
 
-        for (let counter = 1; counter <= 1000; counter++) {
+        for (let counter = 1; counter <= noOfMovies; counter++) {
             alreadyInMovie = [];
 
-            for (let index = 0; index < 10; index++) {
+            for (let index = 0; index < actorsInMovies; index++) {
                 person = Math.floor(Math.random() * 1000) + 1;
 
                 if (!alreadyInMovie.includes(person)) {
@@ -107,35 +108,16 @@ export default {
 
         return moviesAndPersons;
     },
-    createFriendConnection: function () {
-        const friends = []
-        let alreadyFriends;
-        let newFriend;
-
-        for (let counter = 1; counter <= 1000; counter++) {
-            alreadyFriends = [];
-
-            for (let index = 0; index < 10; index++) {
-                newFriend = Math.floor(Math.random() * 1000) + 1;
-
-                if (!alreadyFriends.includes(newFriend) && counter < newFriend) {
-                    friends.push({
-                        user_1: counter,
-                        user_2: newFriend
-                    })
-
-                    alreadyFriends.push(newFriend);
-                }
-            }
-        }
-
-        return friends;
-    },
     writeToFile: function (filename, data) {
+        const fileDirectory = 'csv';
+        if (!fs.existsSync(fileDirectory)) {
+            fs.mkdirSync(fileDirectory);
+        }
+        const filePath = path.join(fileDirectory, filename);
         const headers = Object.keys(data[0]);
         let headerRow = headers.join(',') + '\n';
     
-        fs.appendFileSync(filename, headerRow, (err) => {
+        fs.appendFileSync(filePath, headerRow, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -145,7 +127,7 @@ export default {
             let row = headers.map(header => `"${item[header]}"`);
             row = row.join(',') + '\n';
     
-            fs.appendFileSync(filename, row, (err) => {
+            fs.appendFileSync(filePath, row, (err) => {
                 if (err) {
                     console.log(err);
                 }

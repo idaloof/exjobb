@@ -1,25 +1,73 @@
+import readline from 'readline';
 import CreateModel from './faker.js';
 
-// Create manus
-CreateModel.writeToFile("manus.csv", CreateModel.createManuscript());
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-// Create users
-CreateModel.writeToFile("persons.csv", CreateModel.createPerson())
 
-// Create movies
-// CreateModel.writeToFile("movies.csv", CreateModel.createMovie())
+/**
+ * Asks a question to the user via readline interface
+ * @param {string} prompt - The question prompt
+ * @returns {Promise<string>} The user's answer
+ */
+function askQuestion(prompt) {
+    return new Promise((resolve, reject) => {
+        rl.question(prompt, (answer) => {
+            resolve(answer);
+        });
+    });
+}
 
-// Create categories
-// CreateModel.writeToFile("categories.csv", CreateModel.createCategory())
+/**
+ * Gets user arguments by asking a series of questions
+ * @returns {Promise<number[]>} Array of user arguments
+ */
+async function getArguments() {
+    const userArguments = [];
+    const questions = [
+        'Number of actors: ',
+        'Number of manuses: ',
+        'Number of movies: ',
+        'Maximum number of actors in movies: ',
+    ];
 
-// Create movie category connection
-// CreateModel.writeToFile("category2movie.csv", CreateModel.createMovieCategoryConnection())
+    for (const question of questions) {
+        let answer = await askQuestion(question);
 
-// Create movie person connection
-// CreateModel.writeToFile("movie2person.csv", CreateModel.createMoviePersonConnection())
+        userArguments.push(parseInt(answer));
+    }
+    rl.close();
 
-// // Create posts
-// CreateModel.writeToFile("posts.csv", CreateModel.createPosts())
+    return userArguments;
+}
 
-// Create friends connections
-// CreateModel.writeToFile("friends.csv", CreateModel.createFriendConnection());
+/**
+ * Main function to create CSV files based on user input
+ */
+async function main() {
+    const userInput = await getArguments();
+
+    // Create users
+    CreateModel.writeToFile("persons.csv", CreateModel.createActor(userInput[0]))
+
+    // Create manus
+    CreateModel.writeToFile("manus.csv", CreateModel.createManuscript(userInput[1], userInput[0]));
+
+    // Create movies
+    CreateModel.writeToFile("movies.csv", CreateModel.createMovie(userInput[2]))
+
+    // Create categories
+    CreateModel.writeToFile("categories.csv", CreateModel.createCategory())
+
+    // Create movie category connection
+    CreateModel.writeToFile("category2movie.csv", CreateModel.createMovieCategoryConnection(userInput[2]))
+
+    // Create movie person connection
+    CreateModel.writeToFile("movie2person.csv", CreateModel.createMoviePersonConnection(userInput[2], userInput[3]))
+
+    console.log("CSV-files created!");
+};
+
+main();
