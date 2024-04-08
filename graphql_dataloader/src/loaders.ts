@@ -1,5 +1,5 @@
 import DataLoader from "dataloader";
-import MariaDbHandler from "./MariaDbHandler";
+import MariaDbHandler from "./MariaDbHandler.js";
 
 export const moviesLoader = new DataLoader(batchFunctionMovies);
 

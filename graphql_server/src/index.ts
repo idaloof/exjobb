@@ -4,7 +4,7 @@ dotenv.config();
 
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import MariaDbHandler from "./MariaDbHandler";
+import MariaDbHandler from "./MariaDbHandler.js";
 
 import { ActorType, MovieType, CharacterType } from "./types";
 

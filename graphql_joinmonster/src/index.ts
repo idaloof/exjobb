@@ -4,7 +4,7 @@ dotenv.config();
 
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import MariaDbHandler from "./MariaDbHandler";
+import MariaDbHandler from "./MariaDbHandler.js";
 import joinMonsterAdapt from 'join-monster-graphql-tools-adapter';
 import joinMonster from 'join-monster';
 import { makeExecutableSchema } from '@graphql-tools/schema';
