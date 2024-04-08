@@ -106,7 +106,14 @@ const resolvers = {
                     }
                 }
             })
-        }
+        },
+        async manuscripts(parent: ActorType) {
+            return await prisma.manus.findMany({
+                where: {
+                    author_id: parent.id
+                }
+            })
+        },
     },
     Movie: {
         async characters(parent: MovieType) {
