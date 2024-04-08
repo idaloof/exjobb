@@ -20,13 +20,25 @@ function usage
 {
     local txt=(
 ""
-"Script $SCRIPT is used to work with log-data."
+"Script $SCRIPT is used for simple setup for different GraphQL API:s."
 "Usage: $SCRIPT [options] <command> [arguments]"
 ""
 "Commands:"
 ""
-"   up                   Start the container."
-"   down                 Shut down the container."
+"   up                   Start all containers."
+"   down                 Shut down all the running containers."
+""
+"   Containers not solving N+1:"
+""
+"   basic                Start graphql_basic and mariadb."
+"   prismabasic          Start graphql_prismabasic and mariadb."
+""
+"   Containers solving N+1:"
+""
+"   dataloader           Start graphql_dataloader and mariadb."
+"   joinmonster          Start graphql_joinmonster and mariadb."
+"   prisma               Start graphql_prisma and mariadb."
+"   neo4j                Start graphql_neo4j and neo4j."
 ""
 ""
 "Options:"
@@ -74,7 +86,7 @@ function version
 #
 function app-up
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build
 }
 
@@ -83,7 +95,7 @@ function app-up
 #
 function app-basic
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build mariadb graphql_server
 }
 
@@ -92,7 +104,7 @@ function app-basic
 #
 function app-dataloader
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build mariadb graphql_dataloader
 }
 
@@ -101,7 +113,7 @@ function app-dataloader
 #
 function app-joinmonster
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build mariadb graphql_joinmonster
 }
 
@@ -110,7 +122,7 @@ function app-joinmonster
 #
 function app-prismabasic
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build mariadb graphql_prisma_basic
 }
 
@@ -119,7 +131,7 @@ function app-prismabasic
 #
 function app-prisma
 {
-    # Start the containers and enter the server container in bash
+    # Start the containers
     docker-compose up -d --build mariadb graphql_prisma
 }
 
@@ -138,9 +150,10 @@ function app-neo4j
 #
 function app-down
 {
-    # Container will be closed when exiting, but this will remove all imagess
+    # Close network, containers, remove local images and volumes
     docker-compose down -v --rmi local
 }
+
 
 #
 # Process options
