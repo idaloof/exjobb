@@ -49,8 +49,8 @@ async function getArguments() {
 async function main() {
     const userInput = await getArguments();
 
-    // Create users
-    CreateModel.writeToFile("persons.csv", CreateModel.createActor(userInput[0]))
+    // Create actors
+    CreateModel.writeToFile("actors.csv", CreateModel.createActor(userInput[0]))
 
     // Create manus
     CreateModel.writeToFile("manus.csv", CreateModel.createManuscript(userInput[1], userInput[0]));
@@ -64,8 +64,8 @@ async function main() {
     // Create movie category connection
     CreateModel.writeToFile("category2movie.csv", CreateModel.createMovieCategoryConnection(userInput[2]))
 
-    // Create movie person connection
-    CreateModel.writeToFile("movie2person.csv", CreateModel.createMoviePersonConnection(userInput[2], userInput[3]))
+    // Create movie actor connection
+    CreateModel.writeToFile("movie2actor.csv", CreateModel.createMovieActorConnection(userInput[2], userInput[3]))
 
     console.log("CSV-files created!");
 };
