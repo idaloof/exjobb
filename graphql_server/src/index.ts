@@ -108,6 +108,12 @@ const resolvers = {
             const query = `SELECT * FROM movies WHERE id IN (SELECT movie_id FROM movie2actor WHERE actor_id = ?)`;
 
             return await handler.queryWithArgs(query, [parent.id]);
+        },
+        async manuscripts(parent: ActorType) {
+            const handler = MariaDbHandler.getInstance();
+            const result = await handler.findBy('manus', [parent.id], 'author_id');
+
+            return result;
         }
     },
     Movie: {
