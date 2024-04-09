@@ -35,8 +35,6 @@ services:
       dockerfile: "./neo4j/Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
     environment:
       - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASS}
-    volumes:
-      - "./csv-test/:/var/lib/neo4j/import/csv/"
     ports:
       - "7474:7474"
       - "7687:7687"
