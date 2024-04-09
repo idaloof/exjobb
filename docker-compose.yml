@@ -16,7 +16,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
     volumes:
-      - "./mariadb/csv/:/csv/"
+      - "./csv/:/csv/"
       - "./mariadb/sql/:/sql/"
       - "./mariadb/setup.sql:/docker-entrypoint-initdb.d/setup.sql"
     ports:
@@ -31,10 +31,12 @@ services:
   neo4j:
     container_name: "neo4j"
     build:
-      context: "./neo4j/"
-      dockerfile: "./Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
+      context: "."  # Context is root of repo and not folder neo4j/. This is to be able to access the /csv folder in the root of repo.
+      dockerfile: "./neo4j/Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
     environment:
       - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASS}
+    volumes:
+      - "./csv-test/:/var/lib/neo4j/import/csv/"
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -58,7 +60,7 @@ services:
     volumes:
       - "./graphql_neo4j:/server"
       - "graphql_neo4j_node_modules:/server/node_modules"
-    command: "npm run dev"
+    command: "npm run start"
     depends_on:
       neo4j:
         condition: service_healthy
@@ -81,7 +83,7 @@ services:
     volumes:
       - "./graphql_server/:/server"
       - "graphql_server_node_modules:/server/node_modules"
-    command: "npm run dev"
+    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -109,8 +111,7 @@ services:
       - /bin/sh
       - -c
       - |
-        npx prisma generate
-        npm run dev
+        npm run generate:start
 
   graphql_prisma:
     container_name: graphql_prisma
@@ -132,8 +133,7 @@ services:
       - /bin/sh
       - -c
       - |
-        npx prisma generate
-        npm run dev
+        npm run generate:start
 
   graphql_dataloader:
     container_name: graphql_dataloader
@@ -148,7 +148,7 @@ services:
     volumes:
       - "./graphql_dataloader/:/server"
       - "graphql_dataloader_node_modules:/server/node_modules"
-    command: "npm run dev"
+    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -169,7 +169,7 @@ services:
     volumes:
       - "./graphql_joinmonster/:/server"
       - "graphql_joinmonster_node_modules:/server/node_modules"
-    command: "npm run dev"
+    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
