@@ -1,0 +1,42 @@
+url: http://localhost:4003/
+headers:
+  Content-Type: application/json
+queries:
+  - name: GetActionMovieWithCharacterActorMoviesManuscripts
+    tools: [autocannon, k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query MoviesByCategory($category: String!) {
+        moviesByCategory(category: $category) {
+          id
+          title
+          categories {
+            category {
+              type
+            }
+          }
+          characters {
+            character
+            played_by {
+              id
+              first_name
+              last_name
+              movies {
+                movie {
+                  title
+                  rating
+                }
+              }
+              manuscripts {
+                year
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }
