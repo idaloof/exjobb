@@ -1,5 +1,7 @@
 # basic port 4001
+# prisma-basic port 4004
 # dataloader port 4004
+# joinmonster port 4005
 url: http://localhost:4004/
 headers:
   Content-Type: application/json
