@@ -13,20 +13,18 @@ queries:
       query MoviesByCategory($category: String!) {
         moviesByCategory(category: $category) {
           id
+          rating
           title
-          categories
+          categories {
+            type
+          }
           characters {
             character
             played_by {
               id
               first_name
               last_name
-              movies {
-                title
-                rating
-              }
               manuscripts {
-                id
                 year
               }
             }

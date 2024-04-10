@@ -1,0 +1,39 @@
+url: http://localhost:4000/
+headers:
+  Content-Type: application/json
+queries:
+  - name: GetActionMovieWithCharacterActor
+    tools: [autocannon, k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          rating
+          title
+          categories {
+            type
+          }
+          charactersConnection {
+            edges {
+              properties {
+                character
+              }
+              node {
+                id
+                first_name
+                last_name
+                manuscripts {
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }
