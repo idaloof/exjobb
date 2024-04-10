@@ -1,0 +1,178 @@
+version: "3.8"
+
+volumes:
+  graphql_server_node_modules:
+  graphql_prisma_basic_node_modules:
+  graphql_prisma_node_modules:
+  graphql_dataloader_node_modules:
+  graphql_joinmonster_node_modules:
+  graphql_neo4j_node_modules:
+
+services:
+  mariadb:
+    image: "mariadb:10.11.6"
+    container_name: "mariadb"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - "./csv/:/csv/"
+      - "./mariadb/sql/:/sql/"
+      - "./mariadb/setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: "always"
+
+  neo4j:
+    container_name: "neo4j"
+    build:
+      context: "."  # Context is root of repo and not folder neo4j/. This is to be able to access the /csv folder in the root of repo.
+      dockerfile: "./neo4j/Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASS}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    restart: "always"
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
+
+  graphql_neo4j:
+    container_name: graphql_neo4j
+    build:
+      context: "./graphql_neo4j/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - NEO4J_HOST=${NEO4J_HOST}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASS=${NEO4J_PASS}
+    volumes:
+      - "./graphql_neo4j:/server"
+      - "graphql_neo4j_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    links:
+      - "neo4j:neo4j"
+    ports:
+      - "4000:4000"
+    restart: always
+
+  graphql_server:
+    container_name: graphql_server
+    build:
+      context: "./graphql_server/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_server/:/server"
+      - "graphql_server_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4001:4000"
+    restart: always
+
+  graphql_prisma_basic:
+    container_name: graphql_prisma_basic
+    build:
+      context: "./graphql_prisma_basic/"
+      dockerfile: "./Dockerfile"
+    restart: always
+    ports:
+      - "4002:4000"
+    environment:
+      - DATABASE_URL=${PRISMA_DB_URL}
+    volumes:
+      - "./graphql_prisma_basic/:/server"
+      - "graphql_prisma_basic_node_modules:/server/node_modules"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npx prisma generate
+        npm run dev
+
+  graphql_prisma:
+    container_name: graphql_prisma
+    build:
+      context: "./graphql_prisma/"
+      dockerfile: "./Dockerfile"
+    restart: always
+    ports:
+      - "4003:4000"
+    environment:
+      - DATABASE_URL=${PRISMA_DB_URL}
+    volumes:
+      - "./graphql_prisma/:/server"
+      - "graphql_prisma_node_modules:/server/node_modules"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command:
+      - /bin/sh
+      - -c
+      - |
+        npx prisma generate
+        npm run dev
+
+  graphql_dataloader:
+    container_name: graphql_dataloader
+    build:
+      context: "./graphql_dataloader/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_dataloader/:/server"
+      - "graphql_dataloader_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4004:4000"
+    restart: always
+
+  graphql_joinmonster:
+    container_name: graphql_joinmonster
+    build:
+      context: "./graphql_joinmonster/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - "./graphql_joinmonster/:/server"
+      - "graphql_joinmonster_node_modules:/server/node_modules"
+    command: "npm run dev"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "4005:4000"
+    restart: always
