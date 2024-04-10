@@ -20,7 +20,6 @@ const typeDefs = `#graphql
 
     type Manus {
         id: ID
-        author: Actor
         year: Int
     }
 
@@ -95,14 +94,10 @@ const resolvers = {
         async movies(parent: ActorType) {
             const res = await moviesLoader.load(parent.id);
 
-            // console.log(res);
-
             return res;
         },
         async manuscripts(parent: ActorType) {
             const res = await manuscriptLoader.load(parent.id);
-
-            // console.log(res);
 
             return res;
         }
@@ -111,14 +106,10 @@ const resolvers = {
         async characters(parent: MovieType) {
             const res = await charactersLoader.load(parent.id);
 
-            // console.log(res);
-
             return res;
         },
         async categories(parent: MovieType) {
             const res = await categoriesLoader.load(parent.id);
-
-            // console.log(res);
 
             return res;
         }
@@ -126,8 +117,6 @@ const resolvers = {
     Character: {
         async played_by(parent: CharacterType) {
             const res = await playedByLoader.load(parent.character);
-
-            // console.log(res);
 
             return res;
         }

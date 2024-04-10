@@ -9,7 +9,6 @@ import joinMonsterAdapt from 'join-monster-graphql-tools-adapter';
 import joinMonster from 'join-monster';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
-// A schema is a collection of type definitions (hence "typeDefs")
 const typeDefs = `#graphql
     type Actor {
         id: ID
@@ -21,7 +20,6 @@ const typeDefs = `#graphql
 
     type Manus {
         id: ID
-        author: Actor
         year: Int
     }
 
@@ -51,7 +49,6 @@ const typeDefs = `#graphql
     }
 `;
 
-// Resolvers define how to fetch the types defined in your schema.
 const resolvers = {
     Query: {
         actors (parent: undefined, args: {}, ctx: any, resolveInfo: any) {
@@ -250,8 +247,6 @@ joinMonsterAdapt(schema, {
 const server = new ApolloServer({
     schema
 });
-
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
 });
