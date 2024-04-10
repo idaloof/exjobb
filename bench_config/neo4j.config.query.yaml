@@ -2,8 +2,21 @@ url: http://localhost:4000/
 headers:
   Content-Type: application/json
 queries:
-  - name: GetActionMovieWithCharacterActor
-    tools: [autocannon, k6]
+  - name: GetAllMovies
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Movies {
+        movies {
+          id
+          title
+          rating
+        }
+      }
+  - name: GetActionMoviesCategory
+    tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
     duration: 10s
@@ -11,8 +24,63 @@ queries:
       query Query($where: MovieWhere) {
         movies(where: $where) {
           id
-          rating
           title
+          rating
+          categories {
+            type
+          }
+        }
+      }
+    variables:
+      {
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
+      }
+  - name: GetActionMoviesCategoryCharacters
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          charactersConnection {
+            edges {
+              properties {
+                character
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
+      }
+  - name: GetActionMoviesCategoryCharactersActors
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          title
+          rating
           categories {
             type
           }
@@ -25,8 +93,46 @@ queries:
                 id
                 first_name
                 last_name
-                manuscripts {
-                  year
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
+      }
+  - name: GetActionMoviesCategoryCharactersActorsMovies
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          charactersConnection {
+            edges {
+              properties {
+                character
+              }
+              node {
+                id
+                first_name
+                last_name
+                movies {
+                  id
+                  rating
+                  title
                 }
               }
             }
@@ -35,5 +141,9 @@ queries:
       }
     variables:
       {
-        category: "action"
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
       }
