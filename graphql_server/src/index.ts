@@ -38,13 +38,11 @@ const typeDefs = `#graphql
         title: String
         rating: Float
         characters: [Character]
-        categories: [String]
+        categories: [Category]
     }
 
     type Category {
-        id: ID
         type: String
-        movies(lt_rating: Float, gt_rating: Float): [Movie]
     }
 
     type Query {
@@ -127,13 +125,9 @@ const resolvers = {
             const handler = MariaDbHandler.getInstance();
             const query = `SELECT type FROM categories WHERE id IN (SELECT category_id FROM category2movie WHERE movie_id = ?);`;
 
-            const categoryObjects = await handler.queryWithArgs(query, [parent.id]);
+            const result = await handler.queryWithArgs(query, [parent.id]);
 
-            const categories = categoryObjects.map((category) => {
-                return category.type;
-            });
-
-            return categories;
+            return result;
         }
     },
     Character: {

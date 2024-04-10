@@ -35,13 +35,11 @@ const typeDefs = `#graphql
         title: String
         rating: Float
         characters: [Character]
-        categories: [String]
+        categories: [Category]
     }
 
     type Category {
-        id: ID
         type: String
-        movies(lt_rating: Float, gt_rating: Float): [Movie]
     }
 
     type Query {
@@ -124,7 +122,6 @@ const resolvers = {
             })
         },
         async categories(parent: MovieType) {
-            // console.log(parent.id)
             const result = await prisma.categories.findMany({
                 where: {
                     category2movie: {
@@ -134,8 +131,7 @@ const resolvers = {
                     }
                 }
             })
-            const newResult = result.map(category => {return category.type})
-            return newResult;
+            return result;
         }
     },
     Character: {

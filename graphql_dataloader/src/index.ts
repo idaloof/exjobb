@@ -34,13 +34,11 @@ const typeDefs = `#graphql
         title: String
         rating: Float
         characters: [Character]
-        categories: [String]
+        categories: [Category]
     }
 
     type Category {
-        id: ID
         type: String
-        movies(lt_rating: Float, gt_rating: Float): [Movie]
     }
 
     type Query {

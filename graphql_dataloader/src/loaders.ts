@@ -46,7 +46,7 @@ async function batchFunctionCategories(keys: (string | number)[]): Promise<any> 
         if (!categoriesMap[category.movie_id]) {
             categoriesMap[category.movie_id] = [];
         }
-        categoriesMap[category.movie_id].push(category.type);
+        categoriesMap[category.movie_id].push(category);
     });
 
     return keys.map(key => categoriesMap[key] || []);
