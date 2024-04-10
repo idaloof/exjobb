@@ -7,7 +7,7 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import MariaDbHandler from "./MariaDbHandler.js";
 
 import { ActorType, MovieType, CharacterType } from "./types";
-import { moviesLoader, charactersLoader, categoriesLoader, playedByLoader } from "./loaders.js";
+import { moviesLoader, charactersLoader, categoriesLoader, playedByLoader, manuscriptLoader } from "./loaders.js";
 
 const typeDefs = `#graphql
     type Actor {
@@ -96,6 +96,13 @@ const resolvers = {
     Actor: {
         async movies(parent: ActorType) {
             const res = await moviesLoader.load(parent.id);
+
+            // console.log(res);
+
+            return res;
+        },
+        async manuscripts(parent: ActorType) {
+            const res = await manuscriptLoader.load(parent.id);
 
             // console.log(res);
 

@@ -65,3 +65,20 @@ async function batchFunctionPlayedBy(keys: (string | number)[]): Promise<any> {
 
     return keys.map((key) => actorsMap[key]);
 }
+
+export const manuscriptLoader = new DataLoader(batchFunctionManuscript)
+
+async function batchFunctionManuscript(keys: (string | number)[]): Promise<any> {
+    const handler = MariaDbHandler.getInstance();
+    const manuscripts = await handler.findBy("manus", keys, "author_id");
+    const authorMap = {};
+
+    manuscripts.forEach(manus => {
+        if (!authorMap[manus.author_id]) {
+            authorMap[manus.author_id] = []
+        }
+        authorMap[manus.author_id].push(manus)
+    });
+
+    return keys.map((key) => authorMap[key] || []);
+}
