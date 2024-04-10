@@ -1,13 +1,5 @@
 version: "3.8"
 
-volumes:
-  graphql_server_node_modules:
-  graphql_prisma_basic_node_modules:
-  graphql_prisma_node_modules:
-  graphql_dataloader_node_modules:
-  graphql_joinmonster_node_modules:
-  graphql_neo4j_node_modules:
-
 services:
   mariadb:
     image: "mariadb:10.11.6"
@@ -55,10 +47,6 @@ services:
       - NEO4J_HOST=${NEO4J_HOST}
       - NEO4J_USER=${NEO4J_USER}
       - NEO4J_PASS=${NEO4J_PASS}
-    volumes:
-      - "./graphql_neo4j:/server"
-      - "graphql_neo4j_node_modules:/server/node_modules"
-    command: "npm run start"
     depends_on:
       neo4j:
         condition: service_healthy
@@ -78,10 +66,6 @@ services:
       - DB_USER=${DB_USER}
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - "./graphql_server/:/server"
-      - "graphql_server_node_modules:/server/node_modules"
-    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -99,17 +83,9 @@ services:
       - "4002:4000"
     environment:
       - DATABASE_URL=${PRISMA_DB_URL}
-    volumes:
-      - "./graphql_prisma_basic/:/server"
-      - "graphql_prisma_basic_node_modules:/server/node_modules"
     depends_on:
       mariadb:
         condition: service_healthy
-    command:
-      - /bin/sh
-      - -c
-      - |
-        npm run generate:start
 
   graphql_prisma:
     container_name: graphql_prisma
@@ -121,17 +97,9 @@ services:
       - "4003:4000"
     environment:
       - DATABASE_URL=${PRISMA_DB_URL}
-    volumes:
-      - "./graphql_prisma/:/server"
-      - "graphql_prisma_node_modules:/server/node_modules"
     depends_on:
       mariadb:
         condition: service_healthy
-    command:
-      - /bin/sh
-      - -c
-      - |
-        npm run generate:start
 
   graphql_dataloader:
     container_name: graphql_dataloader
@@ -143,10 +111,6 @@ services:
       - DB_USER=${DB_USER}
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - "./graphql_dataloader/:/server"
-      - "graphql_dataloader_node_modules:/server/node_modules"
-    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -164,10 +128,6 @@ services:
       - DB_USER=${DB_USER}
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - "./graphql_joinmonster/:/server"
-      - "graphql_joinmonster_node_modules:/server/node_modules"
-    command: "npm run start"
     depends_on:
       mariadb:
         condition: service_healthy
