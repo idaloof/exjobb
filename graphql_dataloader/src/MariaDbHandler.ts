@@ -1,15 +1,5 @@
 import mariadb from "mariadb";
 
-// const pool = mariadb.createPool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASSWORD,
-//     // connectionLimit: 10,
-//      multipleStatements: true,
-//     // namedPlaceholders: true
-// });
-
 export default class MariaDbHandler {
     private pool: mariadb.Pool
 
@@ -24,7 +14,6 @@ export default class MariaDbHandler {
             password: process.env.DB_PASSWORD,
             // connectionLimit: 10,
             multipleStatements: true,
-            // namedPlaceholders: true
         });
     }
 

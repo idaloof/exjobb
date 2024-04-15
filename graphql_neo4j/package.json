@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "graphql_neo4j",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -21,7 +21,8 @@
   "contributors": [],
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "test": ""
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
   },
   "dependencies": {
     "@apollo/server": "^4.10.2",

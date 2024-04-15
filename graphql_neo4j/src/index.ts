@@ -20,7 +20,6 @@ const typeDefs = `#graphql
 
     type Manus @mutation(operations: []) {
         id: ID
-        author: Actor! @relationship(type: "HAS_WRITTEN", direction: IN, aggregate: false)
         year: Int
     }
 
@@ -42,18 +41,15 @@ const typeDefs = `#graphql
 
     extend schema @query(read: true, aggregate: false)
 `;
-
 const driver = neo4j.driver(
     `neo4j://${process.env.NEO4J_HOST}:7687`,
     neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS)
 );
 
 const neoSchema = new Neo4jGraphQL({ typeDefs, driver });
-
 const server = new ApolloServer({
     schema: await neoSchema.getSchema(),
 });
-
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
 });

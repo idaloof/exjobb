@@ -1,0 +1,125 @@
+# basic port 4001
+# prisma-basic port 4004
+# dataloader port 4004
+# joinmonster port 4005
+url: http://localhost:4001/
+headers:
+  Content-Type: application/json
+queries:
+  - name: GetAllMovies
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Movies {
+        movies {
+          id
+          title
+          rating
+        }
+      }
+  - name: GetActionMoviesCategory
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }
+  - name: GetActionMoviesCategoryCharacters
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          characters {
+            character
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }
+  - name: GetActionMoviesCategoryCharactersActors
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          characters {
+            character
+            played_by {
+              id
+              first_name
+              last_name
+            }
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }
+  - name: GetActionMoviesCategoryCharactersActorsMovies
+    tools: [k6]
+    execution_strategy: REQUESTS_PER_SECOND
+    rps: 10
+    duration: 10s
+    query: |
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          characters {
+            character
+            played_by {
+              id
+              first_name
+              last_name
+              movies {
+                id
+                rating
+                title
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        category: "action"
+      }

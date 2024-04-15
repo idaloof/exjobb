@@ -1,15 +1,5 @@
 import mariadb from "mariadb";
 
-// const pool = mariadb.createPool({
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASSWORD,
-//     // connectionLimit: 10,
-//      multipleStatements: true,
-//     // namedPlaceholders: true
-// });
-
 export default class MariaDbHandler {
     private pool: mariadb.Pool
 
@@ -24,7 +14,6 @@ export default class MariaDbHandler {
             password: process.env.DB_PASSWORD,
             // connectionLimit: 10,
             multipleStatements: true,
-            // namedPlaceholders: true
         });
     }
 
@@ -72,15 +61,6 @@ export default class MariaDbHandler {
         const query = `SELECT * FROM ${table}`;
         const res = await this.queryNoArgs(query);
         return res;
-        // return new Promise(async (resolve, reject) => {
-            // this.client.all(query, [], (err, rows) => {
-            //     if (err) {
-            //         reject(err);
-            //     } else {
-            //         resolve(rows);
-            //     }
-            // });
-        // });
     }
 
     async findBy(table: string, args: (string | number)[], column: string): Promise<any[]>
@@ -88,42 +68,7 @@ export default class MariaDbHandler {
         const query = `SELECT * FROM ${table} WHERE ${column} IN (${this.phString(args.length)})`;
         const res = await this.queryWithArgs(query, args)
         return res;
-        // return new Promise((resolve, reject) => {
-            // this.client.all(query, [_id], (err, rows) => {
-            //     if (err) {
-            //         reject(err);
-            //     } else {
-            //         resolve(rows);
-            //     }
-            // });
-        // });
     }
-
-    // async find(table: string, id: number): Promise<any | null> {
-    //     const query = `SELECT * FROM ${table} WHERE ${column} IN (${this.phString(args.length)})`;
-    //     // return new Promise((resolve, reject) => {
-    //     //     const stmt = this.client.prepare(query);
-    //     //     stmt.get([_id], (err, row) => {
-    //     //         if (err) {
-    //     //             reject(err);
-    //     //         } else {
-    //     //             resolve(row)
-    //     //         }
-    //     //     })
-    //     // });
-    // }
-
-    // async customQuery(query: string, args: string[] = []): Promise<any[]> {
-    //     return new Promise((resolve, reject) => {
-    //         this.client.all(query, args, (err, rows) => {
-    //             if (err) {
-    //                 reject(err);
-    //             } else {
-    //                 resolve(rows);
-    //             }
-    //         });
-    //     });
-    // }
 
     private phString(length: number) {
         return new Array(length).fill('?').join(', ');

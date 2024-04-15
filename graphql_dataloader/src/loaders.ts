@@ -1,5 +1,5 @@
 import DataLoader from "dataloader";
-import MariaDbHandler from "./MariaDbHandler";
+import MariaDbHandler from "./MariaDbHandler.js";
 
 export const moviesLoader = new DataLoader(batchFunctionMovies);
 
@@ -46,7 +46,7 @@ async function batchFunctionCategories(keys: (string | number)[]): Promise<any> 
         if (!categoriesMap[category.movie_id]) {
             categoriesMap[category.movie_id] = [];
         }
-        categoriesMap[category.movie_id].push(category.type);
+        categoriesMap[category.movie_id].push(category);
     });
 
     return keys.map(key => categoriesMap[key] || []);
@@ -64,4 +64,21 @@ async function batchFunctionPlayedBy(keys: (string | number)[]): Promise<any> {
     });
 
     return keys.map((key) => actorsMap[key]);
+}
+
+export const manuscriptLoader = new DataLoader(batchFunctionManuscript)
+
+async function batchFunctionManuscript(keys: (string | number)[]): Promise<any> {
+    const handler = MariaDbHandler.getInstance();
+    const manuscripts = await handler.findBy("manus", keys, "author_id");
+    const authorMap = {};
+
+    manuscripts.forEach(manus => {
+        if (!authorMap[manus.author_id]) {
+            authorMap[manus.author_id] = []
+        }
+        authorMap[manus.author_id].push(manus)
+    });
+
+    return keys.map((key) => authorMap[key] || []);
 }

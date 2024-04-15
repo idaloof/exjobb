@@ -1,9 +1,26 @@
-FROM node:20
+# # Commented code is used for developing in container
+# FROM node:20
+
+# WORKDIR /server
+# COPY ./package*.json ./
+# RUN npm install
+
+# EXPOSE 4000
+
+FROM node:20-alpine
 
 WORKDIR /server
 
 COPY ./package*.json ./
+COPY ./src ./
+COPY ./prisma ./
+COPY ./tsconfig.json ./
 
-RUN npm install
+RUN npm install && \
+    npm run compile && \
+    npx prisma generate && \
+    rm -rf ./src
 
 EXPOSE 4000
+
+ENTRYPOINT ["node", "./dist/index.js" ]

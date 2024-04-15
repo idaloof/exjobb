@@ -12,7 +12,6 @@ import { ActorType, MovieType } from "./types";
 import { PrismaSelect } from "@paljs/plugins";
 import { GraphQLResolveInfo } from "graphql";
 
-// A schema is a collection of type definitions.
 // To work with Prisma types Movies and Categories represent the junctiontables
 // to be able to resolve the many-to-many connections with PrismaSelect
 const typeDefs = `#graphql
@@ -26,7 +25,6 @@ const typeDefs = `#graphql
 
     type Manus {
         id: ID
-        author: Actor
         year: Int
     }
 
@@ -64,7 +62,6 @@ const typeDefs = `#graphql
     }
 `;
 
-// Resolvers define how to fetch the types defined in your schema.
 const resolvers = {
     Query: {
         async actors(_: undefined, {}, {}, info: GraphQLResolveInfo): Promise<ActorType[]> {
@@ -129,13 +126,11 @@ const resolvers = {
     }
 };
 
-// The ApolloServer constructor requires two parameters, schema and resolvers
 const server = new ApolloServer<BaseContext>({
     typeDefs,
     resolvers,
 });
 
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
 });
