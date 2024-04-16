@@ -8,9 +8,8 @@ headers:
 queries:
   - name: GetAllMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 1
     query: |
       query Movies {
         movies {
@@ -21,9 +20,8 @@ queries:
       }
   - name: GetActionMoviesCategory
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -41,9 +39,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -64,9 +61,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -92,9 +88,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActorsMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {

@@ -6,7 +6,7 @@ queries:
     tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
-    duration: 10s
+    duration: 60s
     query: |
       query Movies {
         movies {
@@ -19,7 +19,7 @@ queries:
     tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
-    duration: 10s
+    duration: 60s
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -41,7 +41,7 @@ queries:
     tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
-    duration: 10s
+    duration: 60s
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -66,7 +66,7 @@ queries:
     tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
-    duration: 10s
+    duration: 60s
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -96,7 +96,7 @@ queries:
     tools: [k6]
     execution_strategy: REQUESTS_PER_SECOND
     rps: 10
-    duration: 10s
+    duration: 60s
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
