@@ -88,7 +88,7 @@ queries:
       {
         category: "action"
       }
-  - name: GetActionMoviesCategoryCharactersActorsMovies
+  - name: GetActionMoviesCategoryCharactersActorsManus
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
@@ -109,12 +109,9 @@ queries:
               id
               first_name
               last_name
-              movies {
-                movie {
-                  id
-                  rating
-                  title
-                }
+              manuscripts {
+                id
+                year
               }
             }
           }
