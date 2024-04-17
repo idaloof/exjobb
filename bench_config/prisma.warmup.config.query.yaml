@@ -1,15 +1,11 @@
-# basic port 4001
-# prisma-basic port 4004
-# dataloader port 4004
-# joinmonster port 4005
-url: http://localhost:4001/
+url: http://192.168.1.21:4003/
 headers:
   Content-Type: application/json
 queries:
   - name: GetAllMovies
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 1
+    requests: 10
     query: |
       query Movies {
         movies {
@@ -21,7 +17,7 @@ queries:
   - name: GetActionMoviesCategory
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 1
+    requests: 10
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -29,7 +25,9 @@ queries:
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
         }
       }
@@ -40,7 +38,7 @@ queries:
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 1
+    requests: 10
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -48,7 +46,9 @@ queries:
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
           characters {
             character
@@ -62,7 +62,7 @@ queries:
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 1
+    requests: 10
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -70,7 +70,9 @@ queries:
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
           characters {
             character
@@ -89,7 +91,7 @@ queries:
   - name: GetActionMoviesCategoryCharactersActorsMovies
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 1
+    requests: 10
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -97,7 +99,9 @@ queries:
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
           characters {
             character
@@ -106,9 +110,11 @@ queries:
               first_name
               last_name
               movies {
-                id
-                rating
-                title
+                movie {
+                  id
+                  rating
+                  title
+                }
               }
             }
           }

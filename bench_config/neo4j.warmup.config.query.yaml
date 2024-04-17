@@ -1,12 +1,11 @@
-url: http://localhost:4000/
+url: http://192.168.1.21:4000/
 headers:
   Content-Type: application/json
 queries:
   - name: GetAllMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
     query: |
       query Movies {
         movies {
@@ -17,9 +16,8 @@ queries:
       }
   - name: GetActionMoviesCategory
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
     query: |
       query Query($where: MovieWhere) {
         movies(where: $where) {
@@ -41,9 +39,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
     query: |
       query Query($where: MovieWhere) {
         movies(where: $where) {
@@ -72,9 +69,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
     query: |
       query Query($where: MovieWhere) {
         movies(where: $where) {
@@ -108,9 +104,8 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActorsMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 60s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
     query: |
       query Query($where: MovieWhere) {
         movies(where: $where) {
