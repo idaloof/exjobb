@@ -6,6 +6,7 @@ queries:
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
+    connections: 1
     query: |
       query Movies {
         movies {
@@ -18,6 +19,7 @@ queries:
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -39,6 +41,7 @@ queries:
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -63,6 +66,7 @@ queries:
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -92,6 +96,7 @@ queries:
     tools: [k6]
     execution_strategy: FIXED_REQUEST_NUMBER
     requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
