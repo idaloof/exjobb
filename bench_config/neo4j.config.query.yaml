@@ -1,4 +1,4 @@
-url: http://192.168.1.21:4003/
+url: http://192.168.1.21:4001/
 headers:
   Content-Type: application/json
 queries:
@@ -21,21 +21,23 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($category: String!) {
-        moviesByCategory(category: $category) {
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
           id
           title
           rating
           categories {
-            category {
-              type
-            }
+            type
           }
         }
       }
     variables:
       {
-        category: "action"
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
@@ -43,80 +45,18 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($category: String!) {
-        moviesByCategory(category: $category) {
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
           id
           title
           rating
           categories {
-            category {
-              type
-            }
+            type
           }
-          characters {
-            character
-          }
-        }
-      }
-    variables:
-      {
-        category: "action"
-      }
-  - name: GetActionMoviesCategoryCharactersActors
-    tools: [k6]
-    execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 10
-    connections: 1
-    query: |
-      query Query($category: String!) {
-        moviesByCategory(category: $category) {
-          id
-          title
-          rating
-          categories {
-            category {
-              type
-            }
-          }
-          characters {
-            character
-            played_by {
-              id
-              first_name
-              last_name
-            }
-          }
-        }
-      }
-    variables:
-      {
-        category: "action"
-      }
-  - name: GetActionMoviesCategoryCharactersActorsManus
-    tools: [k6]
-    execution_strategy: FIXED_REQUEST_NUMBER
-    requests: 10
-    connections: 1
-    query: |
-      query Query($category: String!) {
-        moviesByCategory(category: $category) {
-          id
-          title
-          rating
-          categories {
-            category {
-              type
-            }
-          }
-          characters {
-            character
-            played_by {
-              id
-              first_name
-              last_name
-              manuscripts {
-                id
-                year
+          charactersConnection {
+            edges {
+              properties {
+                character
               }
             }
           }
@@ -124,5 +64,85 @@ queries:
       }
     variables:
       {
-        category: "action"
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
+      }
+  - name: GetActionMoviesCategoryCharactersActors
+    tools: [k6]
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          charactersConnection {
+            edges {
+              properties {
+                character
+              }
+              node {
+                id
+                first_name
+                last_name
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
+      }
+  - name: GetActionMoviesCategoryCharactersActorsManus
+    tools: [k6]
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
+    query: |
+      query Query($where: MovieWhere) {
+        movies(where: $where) {
+          id
+          title
+          rating
+          categories {
+            type
+          }
+          charactersConnection {
+            edges {
+              properties {
+                character
+              }
+              node {
+                id
+                first_name
+                last_name
+                manuscripts {
+                  id
+                  year
+                }
+              }
+            }
+          }
+        }
+      }
+    variables:
+      {
+        "where": {
+          "categories_SOME": {
+            "type": "action"
+          }
+        }
       }

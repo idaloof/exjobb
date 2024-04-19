@@ -1,4 +1,4 @@
-url: http://192.168.1.21:4000/
+url: http://192.168.1.21:4004/
 headers:
   Content-Type: application/json
 queries:
@@ -21,23 +21,21 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($where: MovieWhere) {
-        movies(where: $where) {
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
           id
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
         }
       }
     variables:
       {
-        "where": {
-          "categories_SOME": {
-            "type": "action"
-          }
-        }
+        category: "action"
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
@@ -45,30 +43,24 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($where: MovieWhere) {
-        movies(where: $where) {
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
           id
           title
           rating
           categories {
-            type
-          }
-          charactersConnection {
-            edges {
-              properties {
-                character
-              }
+            category {
+              type
             }
+          }
+          characters {
+            character
           }
         }
       }
     variables:
       {
-        "where": {
-          "categories_SOME": {
-            "type": "action"
-          }
-        }
+        category: "action"
       }
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
@@ -76,35 +68,29 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($where: MovieWhere) {
-        movies(where: $where) {
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
           id
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
-          charactersConnection {
-            edges {
-              properties {
-                character
-              }
-              node {
-                id
-                first_name
-                last_name
-              }
+          characters {
+            character
+            played_by {
+              id
+              first_name
+              last_name
             }
           }
         }
       }
     variables:
       {
-        "where": {
-          "categories_SOME": {
-            "type": "action"
-          }
-        }
+        category: "action"
       }
   - name: GetActionMoviesCategoryCharactersActorsManus
     tools: [k6]
@@ -112,27 +98,25 @@ queries:
     requests: 10
     connections: 1
     query: |
-      query Query($where: MovieWhere) {
-        movies(where: $where) {
+      query Query($category: String!) {
+        moviesByCategory(category: $category) {
           id
           title
           rating
           categories {
-            type
+            category {
+              type
+            }
           }
-          charactersConnection {
-            edges {
-              properties {
-                character
-              }
-              node {
+          characters {
+            character
+            played_by {
+              id
+              first_name
+              last_name
+              manuscripts {
                 id
-                first_name
-                last_name
-                manuscripts {
-                  id
-                  year
-                }
+                year
               }
             }
           }
@@ -140,9 +124,5 @@ queries:
       }
     variables:
       {
-        "where": {
-          "categories_SOME": {
-            "type": "action"
-          }
-        }
+        category: "action"
       }
