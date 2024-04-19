@@ -38,6 +38,24 @@ services:
       retries: 20
       start_period: 3s
 
+  graphql_neo4j_basic:
+    container_name: graphql_neo4j_basic
+    build:
+      context: "./graphql_neo4j_basic/"
+      dockerfile: "./Dockerfile"
+    environment:
+      - NEO4J_HOST=${NEO4J_HOST}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASS=${NEO4J_PASS}
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    links:
+      - "neo4j:neo4j"
+    ports:
+      - "4000:4000"
+    restart: always
+
   graphql_neo4j:
     container_name: graphql_neo4j
     build:
@@ -53,7 +71,7 @@ services:
     links:
       - "neo4j:neo4j"
     ports:
-      - "4000:4000"
+      - "4001:4000"
     restart: always
 
   graphql_server:
@@ -70,7 +88,7 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4001:4000"
+      - "4002:4000"
     restart: always
 
   graphql_prisma_basic:
@@ -80,7 +98,7 @@ services:
       dockerfile: "./Dockerfile"
     restart: always
     ports:
-      - "4002:4000"
+      - "4003:4000"
     environment:
       - DATABASE_URL=${PRISMA_DB_URL}
     depends_on:
@@ -94,7 +112,7 @@ services:
       dockerfile: "./Dockerfile"
     restart: always
     ports:
-      - "4003:4000"
+      - "4004:4000"
     environment:
       - DATABASE_URL=${PRISMA_DB_URL}
     depends_on:
@@ -115,7 +133,7 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4004:4000"
+      - "4005:4000"
     restart: always
 
   graphql_joinmonster:
@@ -132,5 +150,5 @@ services:
       mariadb:
         condition: service_healthy
     ports:
-      - "4005:4000"
+      - "4006:4000"
     restart: always
