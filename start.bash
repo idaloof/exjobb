@@ -109,7 +109,7 @@ function app-dataloader
 }
 
 #
-# Function to start the dataloader container
+# Function to start the joinmonster container
 #
 function app-joinmonster
 {
@@ -136,12 +136,21 @@ function app-prisma
 }
 
 #
-# Function to start the prisma container
+# Function to start the neo4j container
 #
 function app-neo4j
 {
     # Start the containers
     docker-compose up -d --build neo4j graphql_neo4j
+}
+
+#
+# Function to start the neo4j_basic container
+#
+function app-neo4jbasic
+{
+    # Start the containers
+    docker-compose up -d --build neo4j graphql_neo4j_basic
 }
 
 
@@ -181,6 +190,7 @@ function main
             | prismabasic  \
             | prisma       \
             | neo4j        \
+            | neo4jbasic        \
             | down)
                 command="$1"
                 shift
