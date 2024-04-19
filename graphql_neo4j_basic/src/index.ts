@@ -158,7 +158,6 @@ const resolvers = {
             const session = driver.session();
             try {
                 const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE m.id = ${parent.id} RETURN i`);
-                console.log(result.records)
                 return result.records.map(record => record.get('i').properties);
             } finally {
                 await session.close();
