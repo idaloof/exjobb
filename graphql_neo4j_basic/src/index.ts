@@ -157,7 +157,7 @@ const resolvers = {
         characters: async (parent: MovieType) => {
             const session = driver.session();
             try {
-                const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE m.id = ${parent.id} RETURN i, a.id`);
+                const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE m.id = ${parent.id} RETURN i, a`);
                 return result.records.map((record) => {
                     return {
                         character: record.get('i').properties.character,
