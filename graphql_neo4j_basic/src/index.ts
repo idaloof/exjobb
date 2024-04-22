@@ -48,7 +48,10 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     `neo4j://${process.env.NEO4J_HOST}:7687`,
-    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS)
+    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS),
+    {
+        maxConnectionPoolSize: 400
+    }
 );
 
 const resolvers = {
