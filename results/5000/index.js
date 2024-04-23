@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-fs.readFile('report-10000-joinmonster.json', 'utf8', (err, data) => {
+fs.readFile('report-5000-prisma.json', 'utf8', (err, data) => {
     if (err) {
         console.error('Error reading file:', err);
         return;
