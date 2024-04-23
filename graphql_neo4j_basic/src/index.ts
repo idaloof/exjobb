@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import neo4j from "neo4j-driver";
-import { ActorType, MovieType, CharacterType } from "./types";
+import { ActorType, MovieType } from "./types";
 
 dotenv.config();
 
@@ -48,7 +48,10 @@ const typeDefs = `#graphql
 
 const driver = neo4j.driver(
     `neo4j://${process.env.NEO4J_HOST}:7687`,
-    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS)
+    neo4j.auth.basic(process.env.NEO4J_USER, process.env.NEO4J_PASS),
+    {
+        maxConnectionPoolSize: 400
+    }
 );
 
 const resolvers = {
@@ -157,21 +160,16 @@ const resolvers = {
         characters: async (parent: MovieType) => {
             const session = driver.session();
             try {
-                const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE m.id = ${parent.id} RETURN i`);
-                return result.records.map(record => record.get('i').properties);
-            } finally {
-                await session.close();
-            }
-        }
-    },
-    Character: {
-        played_by: async (parent: CharacterType) => {
-            const session = driver.session();
-            try {
-                const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE i.character = "${parent.character}" RETURN a`);
-                const actor = result.records[0].get('a').properties;
-                actor.id = actor.id.toString();
-                return actor;
+                const result = await session.run(`MATCH (a:Actor)-[i:ACTED_IN]->(m:Movie) WHERE m.id = ${parent.id} RETURN i, a`);
+                return result.records.map((record) => {
+                    return {
+                        character: record.get('i').properties.character,
+                        played_by: {
+                            ...record.get('a').properties,
+                            id: record.get('a').properties.id.toString()
+                        },
+                    }
+                });
             } finally {
                 await session.close();
             }

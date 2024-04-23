@@ -1,16 +1,17 @@
-# basic port 4001
-# prisma-basic port 4004
-# dataloader port 4004
-# joinmonster port 4005
-url: http://localhost:4001/
+# neo4j-basic 4000
+# basic port 4002
+# prisma-basic port 4003
+# dataloader port 4005
+# joinmonster port 4006
+url: http://192.168.1.21:4001/
 headers:
   Content-Type: application/json
 queries:
   - name: GetAllMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Movies {
         movies {
@@ -21,9 +22,9 @@ queries:
       }
   - name: GetActionMoviesCategory
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -41,9 +42,9 @@ queries:
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -64,9 +65,9 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -90,11 +91,11 @@ queries:
       {
         category: "action"
       }
-  - name: GetActionMoviesCategoryCharactersActorsMovies
+  - name: GetActionMoviesCategoryCharactersActorsManus
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -110,10 +111,9 @@ queries:
               id
               first_name
               last_name
-              movies {
+              manuscripts {
                 id
-                rating
-                title
+                year
               }
             }
           }

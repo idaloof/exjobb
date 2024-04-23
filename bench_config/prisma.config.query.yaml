@@ -1,12 +1,12 @@
-url: http://localhost:4003/
+url: http://192.168.1.21:4004/
 headers:
   Content-Type: application/json
 queries:
   - name: GetAllMovies
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Movies {
         movies {
@@ -17,9 +17,9 @@ queries:
       }
   - name: GetActionMoviesCategory
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -39,9 +39,9 @@ queries:
       }
   - name: GetActionMoviesCategoryCharacters
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -64,9 +64,9 @@ queries:
       }
   - name: GetActionMoviesCategoryCharactersActors
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -92,11 +92,11 @@ queries:
       {
         category: "action"
       }
-  - name: GetActionMoviesCategoryCharactersActorsMovies
+  - name: GetActionMoviesCategoryCharactersActorsManus
     tools: [k6]
-    execution_strategy: REQUESTS_PER_SECOND
-    rps: 10
-    duration: 10s
+    execution_strategy: FIXED_REQUEST_NUMBER
+    requests: 10
+    connections: 1
     query: |
       query Query($category: String!) {
         moviesByCategory(category: $category) {
@@ -114,12 +114,9 @@ queries:
               id
               first_name
               last_name
-              movies {
-                movie {
-                  id
-                  rating
-                  title
-                }
+              manuscripts {
+                id
+                year
               }
             }
           }
