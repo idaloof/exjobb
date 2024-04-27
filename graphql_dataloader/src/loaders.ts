@@ -29,7 +29,7 @@ async function batchFunctionCharacters(keys: (string | number)[]): Promise<any> 
         if (!charactersMap[character.movie_id]) {
             charactersMap[character.movie_id] = []
         }
-        charactersMap[character.movie_id].push({"character": character.character})
+        charactersMap[character.movie_id].push(character)
     });
 
     return keys.map((key) => charactersMap[key]);
@@ -56,11 +56,11 @@ export const playedByLoader = new DataLoader(batchFunctionPlayedBy)
 
 async function batchFunctionPlayedBy(keys: (string | number)[]): Promise<any> {
     const handler = MariaDbHandler.getInstance();
-    const actors = await handler.findByJoinCharacterActor(keys);
+    const actors = await handler.findBy("actors", keys, "id");
     const actorsMap = {};
 
     actors.forEach(actor => {
-        actorsMap[actor.character] = actor;
+        actorsMap[actor.id] = actor;
     });
 
     return keys.map((key) => actorsMap[key]);
