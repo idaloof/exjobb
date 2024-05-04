@@ -6,7 +6,7 @@ This repo is all the source code used for a report at BTH comparing different Gr
 
 Create your local .env file with all needed variables, see .env.example. The easiest setup would be to just copy and rename that example file.
 
-In the csv-folder you can find folders with serveral csv-files containg data to populate the databases with. Copy files from the wanted folder into the csv-folder. When setting up any of the two databases they will import the files located in the csv-folder, not in the subfolders. See an example using bash:
+In the csv-folder you can find folders with serveral csv-files containing data to populate the databases with. Copy files from the wanted folder into the csv-folder. When setting up any of the two databases they will import the files located in the csv-folder, not in the subfolders. See an example using bash:
 
 ```bash
 # stand in the folder csv
