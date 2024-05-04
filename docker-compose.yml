@@ -24,7 +24,7 @@ services:
     container_name: "neo4j"
     build:
       context: "."  # Context is root of repo and not folder neo4j/. This is to be able to access the /csv folder in the root of repo.
-      dockerfile: "./neo4j/Dockerfile"  # TODO Maybe use specific version of neo4j in Dockerfile?
+      dockerfile: "./neo4j/Dockerfile"
     environment:
       - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASS}
     ports:
