@@ -96,18 +96,18 @@ export default class MariaDbHandler {
         return res;
     }
 
-    async findByJoinCharacterActor(args: (string | number)[]): Promise<any[]>
-    {
-        const query = `
-            SELECT a.*, ma.character
-            FROM actors a
-            INNER JOIN movie2actor ma ON a.id = ma.actor_id
-            WHERE ma.character IN (${this.phString(args.length)})
-        `;
-        const res = await this.queryWithArgs(query, args);
+    // async findByJoinCharacterActor(args: (string | number)[]): Promise<any[]>
+    // {
+    //     const query = `
+    //         SELECT a.*, ma.character
+    //         FROM actors a
+    //         INNER JOIN movie2actor ma ON a.id = ma.actor_id
+    //         WHERE ma.character IN (${this.phString(args.length)})
+    //     `;
+    //     const res = await this.queryWithArgs(query, args);
 
-        return res;
-    }
+    //     return res;
+    // }
 
     private phString(length: number) {
         return new Array(length).fill('?').join(', ');

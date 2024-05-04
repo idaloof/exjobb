@@ -116,7 +116,7 @@ const resolvers = {
     },
     Character: {
         async played_by(parent: CharacterType) {
-            const res = await playedByLoader.load(parent.character);
+            const res = await playedByLoader.load(parent.actor_id);
 
             return res;
         }
