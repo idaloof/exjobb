@@ -38,24 +38,6 @@ services:
       retries: 20
       start_period: 3s
 
-  graphql_neo4j_basic:
-    container_name: graphql_neo4j_basic
-    build:
-      context: "./graphql_neo4j_basic/"
-      dockerfile: "./Dockerfile"
-    environment:
-      - NEO4J_HOST=${NEO4J_HOST}
-      - NEO4J_USER=${NEO4J_USER}
-      - NEO4J_PASS=${NEO4J_PASS}
-    depends_on:
-      neo4j:
-        condition: service_healthy
-    links:
-      - "neo4j:neo4j"
-    ports:
-      - "4000:4000"
-    restart: always
-
   graphql_neo4j:
     container_name: graphql_neo4j
     build:
