@@ -145,16 +145,6 @@ function app-neo4j
 }
 
 #
-# Function to start the neo4j_basic container
-#
-function app-neo4jbasic
-{
-    # Start the containers
-    docker-compose up -d --build neo4j graphql_neo4j_basic
-}
-
-
-#
 # Function to shut down the network
 #
 function app-down
@@ -190,7 +180,6 @@ function main
             | prismabasic  \
             | prisma       \
             | neo4j        \
-            | neo4jbasic        \
             | down)
                 command="$1"
                 shift
